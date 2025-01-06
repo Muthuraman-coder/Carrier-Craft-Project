@@ -1,0 +1,384 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body and Layout */
+body {
+  font-family: 'Arial', sans-serif;
+  background: #e7ebf0;
+  color: #333;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: 250px;
+  background: #1f2937;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  padding: 20px 0;
+}
+
+.sidebar .logo {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #10b981;
+}
+
+.sidebar .admin-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  background: #374151;
+  border-radius: 8px;
+  margin-bottom: 20px; 
+}
+
+.sidebar .admin-header img {
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+  margin-bottom: 10px;
+}
+
+.sidebar .admin-header h2 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #d1d5db;
+}
+
+.sidebar .admin-header span {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  padding: 15px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar ul li:hover,
+.sidebar ul li.active {
+  background: #2563eb;
+  color: #fff;
+  border-radius: 8px;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 250px;
+  flex-grow: 1;
+  background: #f3f4f6;
+  padding: 20px;
+}
+
+/* Header Styling */
+.header {
+  background: white;
+  color: #1f2937;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4d2ddd;
+}
+
+.header .menu-icon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.header .user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-info img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 15px;
+}
+
+/* Dashboard Boxes */
+.dashboard {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.card {
+  flex: 1 1 calc(25% - 20px); /* 4 cards per row */
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  border-top: 4px solid;
+}
+
+.card.red {
+  border-color: #ef4444;
+  background-color: #fee2e2;
+}
+
+.card.blue {
+  border-color: #3b82f6;
+  background-color: #dbeafe;
+}
+
+.card.gray {
+  border-color: #6b7280;
+  background-color: #e5e7eb;
+}
+
+.card.pink {
+  border-color: #ec4899;
+  background-color: #fce7f3;
+}
+
+.card .icon {
+  font-size: 40px;
+  color: white;
+  background: #2563eb;
+  padding: 10px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.card.red .icon {
+  background: #ef4444;
+}
+
+.card.blue .icon {
+  background: #3b82f6;
+}
+
+.card.gray .icon {
+  background: #6b7280;
+}
+
+.card.pink .icon {
+  background: #ec4899;
+}
+
+.card p {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.card .title {
+  font-size: 16px;
+  color: #4b5563;
+  margin-bottom: 10px;
+}
+
+.card .more-info {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-size: 14px;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.card .more-info:hover {
+  text-decoration: underline;
+}
+
+/* Form Styling */
+form {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+form input,
+form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+form textarea {
+  resize: none;
+  height: 100px;
+}
+
+form button {
+  padding: 10px;
+  font-size: 16px;
+  background:  #4d2ddd;;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #059669;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 10px;
+  background: #1f2937;
+  color: white;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100px;
+  }
+
+  .sidebar .admin-header {
+    display: none;
+  }
+
+  .sidebar ul li a {
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .main-content {
+    margin-left: 100px;
+  }
+
+  .card {
+    flex: 1 1 calc(50% - 20px); /* 2 cards per row on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    flex: 1 1 100%; /* Full-width cards on very small screens */
+  }
+}
+
+/* Container and Content Styling */
+/* Light Blue Background for Container */
+.container {
+  background-color: #f0f9ff; /* Light blue background */
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: calc(33.333% - 20px); /* Three sections per row */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.section h3 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 10px;
+}
+
+.section p {
+  font-size: 16px;
+  color: #4b5563;
+  margin: 5px 0;
+}
+
+.section img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 15px;
+}
+
+/* Responsive Design for smaller screens */
+@media (max-width: 768px) {
+  .section {
+    width: calc(50% - 20px); /* Two sections per row on medium screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    width: 100%; /* Full-width sections on very small screens */
+  }
+}
+
+/* Hover effect for Dashboard Cards */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
