@@ -11,13 +11,15 @@ function Sidebar() {
       <ul>
         <li ><Link to="/"><i class="icon">🏠</i>Dashboard</Link></li>
         <li><Link to="/add-student"><i class="icon">👩‍🎓</i>Add Student</Link></li>
-        <li><Link to="/students">Students</Link></li>
+        <li><Link to="/students"><i class="icon">☰</i>Students Details</Link></li>
         <li><Link to="/add-teacher"><i class="icon">👨‍🏫</i>Add Teacher</Link></li>
-        <li><Link to="/teachers">Teachers</Link></li>
+        <li><Link to="/teachers"><i class="icon">☰</i>Teachers Details</Link></li>
         <li><Link to="/add-course"><i class="icon">📚</i>Add Course</Link></li>
-        <li><Link to="/courses">Courses</Link></li>
+        <li><Link to="/courses"><i class="icon">☰</i>Courses Details</Link></li>
         <li><Link to="/add-notice"><i class="icon">📋</i>Add Notice</Link></li>
-        <li><Link to="/notices">Notices</Link></li>
+        <li><Link to="/notices"><i class="icon">☰</i>Notices Details</Link></li>
+        <li><Link to="/allattendance">Attendance Summary</Link></li>
+        <li><Link to="/dailyattendance">Daily Attendance</Link></li>
       </ul>
     </div>
   );

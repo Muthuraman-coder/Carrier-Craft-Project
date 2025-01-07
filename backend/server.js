@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
+const { timeStamp } = require('console');
 
 const app = express();
 
@@ -42,7 +43,7 @@ const teacherSchema = new mongoose.Schema({
 const courseSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
-});
+},{timeStamp:true});
 
 const noticeSchema = new mongoose.Schema({
     title: { type: String, required: true },
@@ -107,14 +108,8 @@ app.post('/api/students/:id/attendance', async (req, res) => {
     try {
         const { date, status } = req.body;
         const student = await Student.findById(req.params.id);
-
-        if (!student) {
-            return res.status(404).json({ error: 'Student not found' });
-        }
-
         student.attendance.push({ date, status });
         await student.save();
-
         res.json({ message: 'Attendance updated successfully', student });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -202,6 +197,18 @@ app.get('/api/courses', async (req, res) => {
     }
 });
 
+app.get('/api/courses/:id', async (req, res) => {
+    try {
+      const course = await Course.findById(req.params.id);
+      if (!course) {
+        return res.status(404).json({ message: 'Course not found' });
+      }
+      res.json(course);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
 app.delete('/api/courses/:id' , async (req , res) =>{
     try{
         const  {id}  = req.params

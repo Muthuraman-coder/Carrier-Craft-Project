@@ -309,66 +309,229 @@ form button:hover {
     flex: 1 1 100%; /* Full-width cards on very small screens */
   }
 }
-
-/* Container and Content Styling */
-/* Light Blue Background for Container */
-.container {
-  background-color: #f0f9ff; /* Light blue background */
+/* studentdetails  */
+.resume-format {
+  max-width: 600px;
+  margin: 20px auto;
   padding: 20px;
+  background: #f9f9f9;
   border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
 }
 
-.content {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
+.resume-format h2 {
+  text-align: center;
+  color: #2563eb;
+  margin-bottom: 15px;
 }
 
-.section {
-  background: white;
+.resume-format img {
+  display: block;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 20px;
+  border: 3px solid #2563eb;
+}
+
+.resume-format p {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.resume-format h4 {
+  margin-top: 20px;
+  color: #2563eb;
+  font-size: 18px;
+  border-bottom: 2px solid #2563eb;
+  padding-bottom: 5px;
+}
+
+.resume-format ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.resume-format ul li {
+  font-size: 14px;
+  margin: 5px 0;
+  padding: 10px;
+  background: #e7ebf0;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+}
+
+.resume-format ul li:nth-child(odd) {
+  background: #f3f4f6;
+}
+
+.resume-format ul li:nth-child(even) {
+  background: #e7ebf0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .resume-format {
+    padding: 15px;
+  }
+
+  .resume-format img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .resume-format p,
+  .resume-format ul li {
+    font-size: 14px;
+  }
+
+  .resume-format h2 {
+    font-size: 20px;
+  }
+}
+
+/* course details  */
+.course-details {
+  max-width: 600px;
+  margin: 20px auto;
   padding: 20px;
+  background: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: calc(33.333% - 20px); /* Three sections per row */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
 }
 
-.section h3 {
-  font-size: 20px;
-  font-weight: bold;
+.course-details h2 {
+  text-align: center;
+  color: #2563eb;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.course-details h3 {
   color: #1f2937;
+  font-size: 20px;
   margin-bottom: 10px;
 }
 
-.section p {
+.course-details p {
   font-size: 16px;
+  margin: 10px 0;
   color: #4b5563;
-  margin: 5px 0;
 }
 
-.section img {
-  width: 100px;
-  height: 100px;
+.course-details p strong {
+  color: #2563eb;
+  font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .course-details {
+    padding: 15px;
+  }
+
+  .course-details h2 {
+    font-size: 20px;
+  }
+
+  .course-details h3 {
+    font-size: 18px;
+  }
+
+  .course-details p {
+    font-size: 14px;
+  }
+}
+/* book-course */
+
+/* table Container and Content Styling */
+.table-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.student-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.student-table th,
+.student-table td {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+}
+
+.student-table th {
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+}
+
+.student-table td {
+  vertical-align: middle;
+}
+
+.student-table img {
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  margin-top: 15px;
 }
 
-/* Responsive Design for smaller screens */
+.student-table a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.student-table a:hover {
+  text-decoration: underline;
+}
+
+.student-table button {
+  padding: 5px 10px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.student-table button:hover {
+  background: #dc2626;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .section {
-    width: calc(50% - 20px); /* Two sections per row on medium screens */
+  .student-table {
+    font-size: 14px;
+  }
+
+  .student-table img {
+    width: 40px;
+    height: 40px;
   }
 }
 
-@media (max-width: 480px) {
-  .section {
-    width: 100%; /* Full-width sections on very small screens */
-  }
-}
+
 
 /* Hover effect for Dashboard Cards */
 .card:hover {
@@ -381,4 +544,79 @@ form button:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease-in-out;
+}
+
+/* table  */
+.table {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #f9f9f9; /* Light background */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table h2 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #1f2937; /* Dark header background */
+  color: white;
+}
+
+thead th {
+  padding: 15px;
+  font-size: 16px;
+  text-align: left;
+  border-bottom: 2px solid #374151;
+}
+
+tbody tr {
+  background: white;
+  transition: background-color 0.3s ease;
+}
+
+tbody tr:nth-child(odd) {
+  background: #f3f4f6; /* Slightly different background for alternating rows */
+}
+
+tbody tr:hover {
+  background: #e5e7eb; /* Highlight row on hover */
+}
+
+tbody td {
+  padding: 15px;
+  font-size: 14px;
+  color: #4b5563;
+  border-bottom: 1px solid #d1d5db;
+}
+
+tbody td:first-child {
+  font-weight: bold; /* Highlight the student's name */
+  color: #1f2937;
+}
+
+@media (max-width: 768px) {
+  .table {
+    padding: 10px;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  thead th, tbody td {
+    padding: 10px;
+  }
 }

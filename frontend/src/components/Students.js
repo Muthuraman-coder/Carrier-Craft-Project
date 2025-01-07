@@ -1,10 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import UpdateAttendance from './Attendance';
+import { Link } from 'react-router-dom';
 
 function Students() {
-
-    const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState([]);
 
   useEffect(() => {
     async function fetchStudents() {
@@ -19,43 +18,46 @@ function Students() {
     fetchStudents();
   }, []);
 
-  const handledelete = (id) =>{
-    try{
-      axios.delete(`http://localhost:3001/api/students/${id}`)
-      setStudents(students.filter((student) => student._id !== id))
-      alert('student deleted successfully')
-    }catch(error){
-      alert('errro in student delete')
+  const handledelete = (id) => {
+    try {
+      axios.delete(`http://localhost:3001/api/students/${id}`);
+      setStudents(students.filter((student) => student._id !== id));
+      alert('Student deleted successfully');
+    } catch (error) {
+      alert('Error deleting student');
     }
-  }
+  };
 
   return (
-    <div className="container">
-      <div className="content">
-      {students.map(student => (
-        <div className="section" key={student._id}>
-          <h3>{student.name}</h3>
-          <p>Age: {student.age}</p>
-          <p>Grade: {student.grade}</p>
-          <p>Email: {student.email}</p>
-          <img src={`http://localhost:3001${student.profilePicture}`} alt="profile" />
-          <button onClick={() => handledelete(student._id)}>Delete</button>
-
-          <h4>Attendance:</h4>
-        <ul>
-            {student.attendance.map((record, index) => (
-                <li key={index}>
-                    {new Date(record.date).toLocaleDateString()}: {record.status}
-                </li>
-            ))}
-        </ul>
-
-        <h4>Update Attendance:</h4>
-        <UpdateAttendance studentId={student._id} />
-        </div>
+    <div className="table-container">
+  <h2>Student List</h2>
+  <table className="student-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Course</th>
+        <th>CGPA</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {students.map((student) => (
+        <tr key={student._id}>
+          <td>
+            <Link to={`/students/${student._id}`}>{student.name}</Link>
+          </td>
+          <td>{student.course}</td>
+          <td>{student.grade}</td>
+          <td>{student.email}</td>
+          <td>
+            <button onClick={() => handledelete(student._id)}>Delete</button>
+          </td>
+        </tr>
       ))}
-     </div>
-    </div>
+    </tbody>
+  </table>
+</div>
   );
 }
 

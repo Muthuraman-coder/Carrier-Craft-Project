@@ -40,7 +40,6 @@ function UpdateAttendance({ studentId }) {
                     <option value="">Select Status</option>
                     <option value="Present">Present</option>
                     <option value="Absent">Absent</option>
-                    <option value="Late">Late</option>
                 </select>
             </label>
             <button type="submit">Update Attendance</button>

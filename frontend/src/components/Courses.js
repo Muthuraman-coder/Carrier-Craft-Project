@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Courses() {
   const [courses, setCourses] = useState([]);
@@ -28,14 +29,16 @@ function Courses() {
   }
 
   return (
-    <div className="container">
-      <div className="content">
+    <div className='dashboard'>
+      <div className="card blue">
+        <div className="icon">📚</div>
         {courses.map((course) => (
-          <div className="section" key={course._id}>
-            <h3>{course.name}</h3>
-            <p>Description: {course.description}</p>
-            <button onClick={() => handledelete(course._id)}>Delete</button>
-          </div>
+            <div  key={course._id}>
+              <Link to={`/courses/${course._id}`}>
+               <p >{course.name}</p>
+              </Link>
+              <button onClick={() => handledelete(course._id)}>Delete</button>
+            </div>
         ))}
       </div>
     </div>
