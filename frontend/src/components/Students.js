@@ -29,9 +29,9 @@ function Students() {
   };
 
   return (
-    <div className="table-container">
+    <div >
   <h2>Student List</h2>
-  <table className="student-table">
+  <table>
     <thead>
       <tr>
         <th>Name</th>

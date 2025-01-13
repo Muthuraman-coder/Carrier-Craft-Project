@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
-const { timeStamp } = require('console');
+const jwt = require("jsonwebtoken")
+const bcrypt = require("bcrypt")
+const secret = 'secret-muthu';
+
 
 const app = express();
 
@@ -28,16 +31,28 @@ const studentSchema = new mongoose.Schema({
     age: { type: Number, required: true },
     grade: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
     profilePicture: { type: String },
-    course : { type: String, required: true },
+    course: { type: String, required: true },
     attendance: [{ date: { type: Date, required: true }, status: { type: String, required: true } }],
+    role: { type: String, default: "student" }
 });
+    
 
 const teacherSchema = new mongoose.Schema({
     name: { type: String, required: true },
     subject: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
     profilePicture: { type: String },
+    role: { type: String, default: "teacher" } 
+});
+
+const adminSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, default: "admin" }
 });
 
 const courseSchema = new mongoose.Schema({
@@ -58,9 +73,30 @@ const checkschema = new mongoose.Schema({
 const check = mongoose.model('check' , checkschema);
 const Student = mongoose.model('Student', studentSchema);
 const Teacher = mongoose.model('Teacher', teacherSchema);
+const Admin = mongoose.model('Admin', adminSchema);
 const Course = mongoose.model('Course', courseSchema);
 const Notice = mongoose.model('Notice', noticeSchema);
 
+//middleware authentication
+const authenticateToken = (req, res, next) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Access Denied' });
+
+    jwt.verify(token, secret, (err, user) => {
+        if (err) return res.status(403).json({ message: 'Invalid Token' });
+        req.user = user;
+        next();
+    });
+};
+
+const authorizeRoles = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ message: 'Permission Denied' });
+        }
+        next();
+    };
+};
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -72,6 +108,87 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+//signup
+
+app.post('/api/signup', upload.single('profilePicture') , async (req, res) => {
+    try {
+        const { name, email, password, role, subject ,course , grade , age } = req.body;
+        
+        if (role === 'teacher' && !subject) {
+            return res.status(400).json({ message: 'Subject is required for teachers' });
+        }
+
+        if (role === 'student' && (!course || !grade || !age)) {
+            return res.status(400).json({ message: 'All student fields are required' });
+        }        
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        let profilePicture = null
+        if(req.file){
+            profilePicture = `/uploads/${req.file.filename}`
+        }
+
+        let newUser;
+        if (role === 'admin') {
+            newUser = new Admin({ name, email, password: hashedPassword });
+        } else if (role === 'teacher') {
+            newUser = new Teacher({ name, email, password: hashedPassword, subject , profilePicture});
+        } else {
+            newUser = new Student({ name, email, password: hashedPassword , course , grade , age , profilePicture});
+        }
+
+        const savedUser = await newUser.save();
+        res.status(201).json(savedUser);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+//signin
+app.post('/api/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await Admin.findOne({ email }) || 
+                     await Teacher.findOne({ email }) || 
+                     await Student.findOne({ email });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+
+        const token = jwt.sign({ id: user._id, role: user.role }, secret, { expiresIn: '99 years' });
+        res.json({ token, role: user.role });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+//user details 
+app.get('/api/user', authenticateToken, async (req, res) => {
+    try {
+      const { id, role } = req.user;
+  
+      let user;
+      if (role === 'admin') {
+        user = await Admin.findById(id).select('name profilePicture');
+      } else if (role === 'teacher') {
+        user = await Teacher.findById(id).select('name profilePicture');
+      } else if (role === 'student') {
+        user = await Student.findById(id).select('name profilePicture');
+      }
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
 //check
 app.get('/api/check' , async (req , res ) => {
     const checks = await check.find()
@@ -84,6 +201,19 @@ app.post('/api/check' , async (req ,res) =>{
     const savecheck = await newcheck.save()
     res.json(savecheck)
 })
+
+//middleware users
+app.get('/api/admin/dashboard', authenticateToken, authorizeRoles('admin'), (req, res) => {
+    res.json({ message: 'Welcome Admin!' });
+});
+
+app.get('/api/teacher/dashboard', authenticateToken, authorizeRoles('teacher'), (req, res) => {
+    res.json({ message: 'Welcome Teacher!' });
+});
+
+app.get('/api/student/dashboard', authenticateToken, authorizeRoles('student'), (req, res) => {
+    res.json({ message: 'Welcome Student!' });
+});
 
 // Students
 app.get('/api/students', async (req, res) => {

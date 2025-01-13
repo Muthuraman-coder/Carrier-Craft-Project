@@ -29,21 +29,33 @@ function Teachers() {
   }
 
   return (
-    <div className="container">
-      <div className="content">
-      {teachers.map(teacher => (
-          <div className="section" key={teacher._id}>
-            <Link to={`/teachers/${teacher._id}`}>
-              <h3>{teacher.name}</h3>
-              <p>Course: {teacher.subject}</p>
-              <p>Email: {teacher.email}</p>
-              <img src={`http://localhost:3001${teacher.profilePicture}`} alt="profile" />
-            </Link>
-            <button onClick={() => handledelete(teacher._id)}>Delete</button>
-          </div>
-      ))}
-     </div>
-    </div>
+    <div>
+    <h2>Teacher List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Course</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {teachers.map((teacher) => (
+          <tr key={teacher._id}>
+            <td>
+              <Link to={`/teachers/${teacher._id}`}>{teacher.name}</Link>
+            </td>
+            <td>{teacher.subject}</td>
+            <td>{teacher.email}</td>
+            <td>
+              <button onClick={() => handledelete(teacher._id)}>Delete</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>  
   );
 }
 

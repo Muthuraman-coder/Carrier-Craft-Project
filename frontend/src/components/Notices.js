@@ -28,8 +28,7 @@ function Notices() {
   }
 
   return (
-    <div className="container">
-      <div className="content">
+    <div className="notice">
       {notices.map(notice => (
         <div className="section" key={notice._id}>
           <h3>{notice.title}</h3>
@@ -39,7 +38,6 @@ function Notices() {
         </div>
       ))}
      </div>
-    </div>
   );
 }
 
