@@ -27,7 +27,6 @@ function App() {
   const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    // Simulate fetching authentication state from localStorage or an API
     const auth = localStorage.getItem('isAuthenticated') === 'true';
     const role = localStorage.getItem('role');
     setIsAuthenticated(auth);
@@ -35,7 +34,6 @@ function App() {
   }, []);
 
   const handleLogin = (role) => {
-    // Simulate login, set role, and mark user as authenticated
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('role', role);
     setIsAuthenticated(true);
@@ -43,7 +41,6 @@ function App() {
   };
 
   const handleLogout = () => {
-    // Simulate logout
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('role');
     setIsAuthenticated(false);
@@ -64,7 +61,7 @@ function App() {
   return (
     <Router>
       <div className="app">
-        <Sidebar userRole={userRole} />
+        <Sidebar />
         <div className="main-content">
           <Header onLogout={handleLogout} />
           <div className="container">

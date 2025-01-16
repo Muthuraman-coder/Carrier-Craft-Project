@@ -17,11 +17,12 @@ function Sidebar() {
         <h2>CCA</h2>
       </div>
       <ul>
-        <li>
-          <Link to="/"><i className="icon">🏠</i>Dashboard</Link>
-        </li>
+        {!userRole && (
+          <><li>welcome to CCA</li></>
+        )}
         {userRole === 'admin' && (
           <>
+            <li><Link to="/admin"><i className="icon">🏠</i>Dashboard</Link></li>
             <li><Link to="/signup"><i className="icon">👩‍🎓</i>New Register</Link></li>
             <li><Link to="/students"><i className="icon">☰</i>Students Details</Link></li>
             <li><Link to="/teachers"><i className="icon">☰</i>Teachers Details</Link></li>
@@ -36,6 +37,12 @@ function Sidebar() {
 
         {(userRole === 'teacher' || userRole === 'student') && (
           <>
+          {(userRole === 'student') && (
+            <li><Link to="/student"><i className="icon">🏠</i>Dashboard</Link></li>
+          )}
+          {(userRole === 'teacher') && (
+            <li><Link to="/teacher"><i className="icon">🏠</i>Dashboard</Link></li>
+          )}
             <li><Link to="/students"><i className="icon">☰</i>Students Details</Link></li>
             <li><Link to="/teachers"><i className="icon">☰</i>Teachers Details</Link></li>
             <li><Link to="/courses"><i className="icon">☰</i>Courses Details</Link></li>

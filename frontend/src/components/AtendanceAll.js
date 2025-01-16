@@ -39,7 +39,9 @@ function AttendanceSummary() {
             return (
               <tr key={student._id}>
                 <td>{student.name}</td>
-                <td>{student.course}</td>
+                {student.course.map((c) => (
+                  <td key={c._id}>{c.name}</td>
+                ))}
                 <td>{totalPresent}</td>
                 <td>{totalAbsent}</td>
                 <td>{totalLate}</td>

@@ -31,7 +31,7 @@ function StudentDetails() {
       <p>Grade: {student.grade}</p>
       <p>Email: {student.email}</p>
       {student.course.map((c) =>(
-        <p>Course: {c.name}</p>
+        <p key={c._id}>Course: {c.name}</p>
       ))}
       <h4>Attendance:</h4>
       <ul>

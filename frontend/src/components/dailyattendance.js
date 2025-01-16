@@ -57,7 +57,9 @@ function DailyAttendance() {
           {students.map((student) => (
             <tr key={student._id}>
               <td>{student.name}</td>
-              <td>{student.course}</td>
+              {student.course.map((c) =>(
+                <td key={c._id}>{c.name}</td>
+              ))}
               <td><input type="date" value={date} onChange={(e) => setDate(e.target.value)} required/></td>
               <td>
                 <select value={attendance[student._id]} onChange={(e) => handleAttendanceChange(student._id, e.target.value)} >
