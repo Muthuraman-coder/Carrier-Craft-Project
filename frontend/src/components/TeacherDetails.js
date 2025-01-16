@@ -28,7 +28,9 @@ function TeacherDetails() {
         <img src={`http://localhost:3001${teacher.profilePicture}`} alt="profile" />
       <h2>{teacher.name}'s Details</h2>
       <p>Email: {teacher.email}</p>
-      <p>Course: {teacher.subject}</p>
+      {teacher.course.map(c =>(
+            <p>Course: {c.name ? c.name : 'course not selected'}</p>
+          ))}
     </div>
   );
 }

@@ -4,7 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
 const jwt = require("jsonwebtoken")
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
 const secret = 'secret-muthu';
 
 
@@ -25,7 +25,7 @@ const mdb = 'mongodb+srv://chatgpt230:123456sS@ramdatabase1.x85e3.mongodb.net/?r
 mongoose.connect(mdb) 
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error(err));
-
+    
 const studentSchema = new mongoose.Schema({
     name: { type: String, required: true },
     age: { type: Number, required: true },
@@ -33,7 +33,7 @@ const studentSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     profilePicture: { type: String },
-    course: { type: String, required: true },
+    course: [{type : mongoose.Schema.Types.ObjectId , ref :'Course' , required : true}],
     attendance: [{ date: { type: Date, required: true }, status: { type: String, required: true } }],
     role: { type: String, default: "student" }
 });
@@ -41,7 +41,7 @@ const studentSchema = new mongoose.Schema({
 
 const teacherSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    subject: { type: String, required: true },
+    course: [{type:mongoose.Schema.Types.ObjectId , ref : 'Course' , required : true}],
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     profilePicture: { type: String },
@@ -58,6 +58,8 @@ const adminSchema = new mongoose.Schema({
 const courseSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
+    students :[{type:mongoose.Schema.Types.ObjectId , ref:'Student'}],
+    teachers : [{type:mongoose.Schema.Types.ObjectId , ref:'Teacher'}]
 },{timeStamp:true});
 
 const noticeSchema = new mongoose.Schema({
@@ -70,12 +72,13 @@ const checkschema = new mongoose.Schema({
     name:{ type : String, required:true}
 })
 
-const check = mongoose.model('check' , checkschema);
+const Course = mongoose.model('Course', courseSchema);
 const Student = mongoose.model('Student', studentSchema);
 const Teacher = mongoose.model('Teacher', teacherSchema);
 const Admin = mongoose.model('Admin', adminSchema);
-const Course = mongoose.model('Course', courseSchema);
 const Notice = mongoose.model('Notice', noticeSchema);
+const check = mongoose.model('check', checkschema);
+
 
 //middleware authentication
 const authenticateToken = (req, res, next) => {
@@ -109,38 +112,48 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 //signup
-
-app.post('/api/signup', upload.single('profilePicture') , async (req, res) => {
+app.post('/api/signup', upload.single('profilePicture'), async (req, res) => {
     try {
-        const { name, email, password, role, subject ,course , grade , age } = req.body;
-        
-        if (role === 'teacher' && !subject) {
-            return res.status(400).json({ message: 'Subject is required for teachers' });
+        const { name, email, password, role, course, grade, age } = req.body;
+
+        if (role === 'teacher' && !course) {
+            return res.status(400).json({ message: 'Course is required for teachers' });
         }
 
         if (role === 'student' && (!course || !grade || !age)) {
-            return res.status(400).json({ message: 'All student fields are required' });
-        }        
+            return res.status(400).json({ message: 'All student fields (course, grade, age) are required' });
+        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        
-        let profilePicture = null
-        if(req.file){
-            profilePicture = `/uploads/${req.file.filename}`
+
+        let profilePicture = null;
+        if (req.file) {
+            profilePicture = `/uploads/${req.file.filename}`;
         }
 
         let newUser;
+        let savedUser;
+
         if (role === 'admin') {
             newUser = new Admin({ name, email, password: hashedPassword });
+            savedUser = await newUser.save();
         } else if (role === 'teacher') {
-            newUser = new Teacher({ name, email, password: hashedPassword, subject , profilePicture});
-        } else {
-            newUser = new Student({ name, email, password: hashedPassword , course , grade , age , profilePicture});
+            newUser = new Teacher({ name, email, password: hashedPassword, course, profilePicture });
+            savedUser = await newUser.save();
+            const selectedCourse = await Course.findById(course);
+            selectedCourse.teachers.push(savedUser._id);
+            await selectedCourse.save();
+        } else if (role === 'student') {
+            newUser = new Student({ name, email, password: hashedPassword, course, grade, age, profilePicture });
+            savedUser = await newUser.save();
+            const selectedCourse = await Course.findById(course);
+            selectedCourse.students.push(savedUser._id);
+            await selectedCourse.save();
         }
 
-        const savedUser = await newUser.save();
         res.status(201).json(savedUser);
     } catch (err) {
+        console.error(err);
         res.status(400).json({ error: err.message });
     }
 });
@@ -218,7 +231,7 @@ app.get('/api/student/dashboard', authenticateToken, authorizeRoles('student'), 
 // Students
 app.get('/api/students', async (req, res) => {
     try {
-        const students = await Student.find()
+        const students = await Student.find().populate('course')
         res.json(students);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -227,7 +240,8 @@ app.get('/api/students', async (req, res) => {
 
 app.get('/api/students/:id', async (req, res) => {
     try {
-        const student = await Student.findById(req.params.id)
+        const student = await Student.findById(req.params.id).populate('course')
+        console.log(student)
         res.json(student);
     } catch (err) {
         res.status(404).json({ error: 'Student not found' });
@@ -275,7 +289,7 @@ app.post('/api/students', upload.single('profilePicture'), async (req, res) => {
 // Teachers
 app.get('/api/teachers', async (req, res) => {
     try {
-        const teachers = await Teacher.find()
+        const teachers = await Teacher.find().populate('course')
         res.json(teachers);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -284,7 +298,7 @@ app.get('/api/teachers', async (req, res) => {
 
 app.get('/api/teachers/:id', async (req, res) => {
     try {
-        const teacher = await Teacher.findById(req.params.id)
+        const teacher = await Teacher.findById(req.params.id).populate('course')
         res.json(teacher);
     } catch (err) {
         res.status(404).json({ error: 'Teacher not found' });
@@ -320,7 +334,8 @@ app.post('/api/teachers', upload.single('profilePicture'), async (req, res) => {
 // Courses
 app.get('/api/courses', async (req, res) => {
     try {
-        const courses = await Course.find()
+        const courses = await Course.find().populate('students').populate('teachers')
+        console.log(courses)
         res.json(courses);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -328,16 +343,22 @@ app.get('/api/courses', async (req, res) => {
 });
 
 app.get('/api/courses/:id', async (req, res) => {
-    try {
-      const course = await Course.findById(req.params.id);
-      if (!course) {
-        return res.status(404).json({ message: 'Course not found' });
-      }
-      res.json(course);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
+  try {
+    const course = await Course.findById(req.params.id)
+      .populate('students') 
+      .populate('teachers'); 
+
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
     }
-  });
+
+    res.json(course);
+  } catch (error) {
+    console.error('Error fetching course details:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
   
 app.delete('/api/courses/:id' , async (req , res) =>{
     try{
@@ -352,6 +373,28 @@ app.delete('/api/courses/:id' , async (req , res) =>{
         console.log('error is here :', error)
     }
 })
+
+//update course for student
+app.post('/api/courses/:id/students', async (req, res) => {
+    try {
+        const course = await Course.findById(req.params.id);
+        const student = await Student.findById(req.body.studentId);
+
+        if (!course || !student) {
+            return res.status(404).json({ message: 'Course or student not found' });
+        }
+
+        course.students.push(student._id);
+        await course.save();
+
+        student.course = course._id;
+        await student.save();
+
+        res.json({ message: 'Student added to course successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 app.post('/api/courses', async (req, res) => {
     try {

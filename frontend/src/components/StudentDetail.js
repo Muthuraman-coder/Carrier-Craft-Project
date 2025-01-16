@@ -30,7 +30,9 @@ function StudentDetails() {
       <p>Age: {student.age}</p>
       <p>Grade: {student.grade}</p>
       <p>Email: {student.email}</p>
-      <p>Course: {student.course}</p>
+      {student.course.map((c) =>(
+        <p>Course: {c.name}</p>
+      ))}
       <h4>Attendance:</h4>
       <ul>
         {student.attendance.map((record, index) => (

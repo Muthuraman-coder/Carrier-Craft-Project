@@ -46,7 +46,9 @@ function Teachers() {
             <td>
               <Link to={`/teachers/${teacher._id}`}>{teacher.name}</Link>
             </td>
-            <td>{teacher.subject}</td>
+            {teacher.course.map(c =>(
+              <td key={c._id}>{c.name ? c.name : 'course not selected'}</td>
+            ))}
             <td>{teacher.email}</td>
             <td>
               <button onClick={() => handledelete(teacher._id)}>Delete</button>

@@ -47,7 +47,9 @@ function Students() {
           <td>
             <Link to={`/students/${student._id}`}>{student.name}</Link>
           </td>
-          <td>{student.course}</td>
+          {student.course.map(c =>(
+            <td key={c._id}>{c.name ? c.name : 'course not selected'}</td>
+          ))}
           <td>{student.grade}</td>
           <td>{student.email}</td>
           <td>
