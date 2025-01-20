@@ -21,6 +21,12 @@ import StudentDetails from './components/StudentDetail';
 import TeacherDetails from './components/TeacherDetails';
 import CourseDetails from './components/CourseDetails';
 import Signup from './components/Signup';
+import Signapp from './components/signpages/signapp';
+import Enquires from './components/enquires';
+import Centres from './components/signpages/centres';
+import Help from './components/signpages/help';
+import AboutUs from './components/signpages/about';
+import Graph from './components/graph';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -51,7 +57,11 @@ function App() {
     return (
       <Router>
         <Routes>
-          <Route path="/" element={<Login onLogin={handleLogin} />} />
+          <Route path='/' element={<Login onLogin={handleLogin} />} />
+          <Route path="/signapp" element={<Signapp />} />
+          <Route path="/centres" element={<Centres />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/about" element={<AboutUs />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
@@ -67,10 +77,11 @@ function App() {
           <div className="container">
             <Routes>
               <Route path="/" element={<Navigate to={`/${userRole}`} />} />
-              <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
+              <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/teacher" element={<ProtectedRoute role="teacher"><TeacherDashboard /></ProtectedRoute>} />
               <Route path="/student" element={<ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/enquires" element={<Enquires />} />
               <Route path="/add-student" element={<AddStudent />} />
               <Route path="/add-teacher" element={<AddTeacher />} />
               <Route path="/add-notice" element={<AddNotice />} />
@@ -82,6 +93,7 @@ function App() {
               <Route path="/courses" element={<Courses />} />
               <Route path="/courses/:id" element={<CourseDetails />} />
               <Route path="/notices" element={<Notices />} />
+              <Route path="/graph" element={<Graph />} />
               <Route path="/allattendance" element={<AttendanceSummary />} />
               <Route path="/dailyattendance" element={<DailyAttendance />} />
             </Routes>

@@ -25,6 +25,13 @@ const mdb = 'mongodb+srv://chatgpt230:123456sS@ramdatabase1.x85e3.mongodb.net/?r
 mongoose.connect(mdb) 
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error(err));
+
+const Enquire = new mongoose.Schema({
+    name:{ type: String},
+    email:{ type: String},
+    number:{ type: Number},
+    course:{ type: String}
+})
     
 const studentSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -78,6 +85,7 @@ const Teacher = mongoose.model('Teacher', teacherSchema);
 const Admin = mongoose.model('Admin', adminSchema);
 const Notice = mongoose.model('Notice', noticeSchema);
 const check = mongoose.model('check', checkschema);
+const Enquires = mongoose.model('enquries' , Enquire);
 
 
 //middleware authentication
@@ -111,7 +119,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-//signup
+//Registration
 app.post('/api/signup', upload.single('profilePicture'), async (req, res) => {
     try {
         const { name, email, password, role, course, grade, age } = req.body;
@@ -178,6 +186,25 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+//enquires
+app.post('/api/enquires' , async (req,res) =>{
+    const enquiredata = req.body;
+    const enquire = new Enquires(enquiredata)
+    const savedEnquire = await enquire.save()
+    console.log('enquire details',savedEnquire)
+    res.json(savedEnquire)
+})
+
+app.get('/api/enquires' , async (req,res) => {
+    const enquire = await Enquires.find()
+    res.json(enquire)
+})
+
+app.delete('/api/enquires/:id' , async(req,res) =>{
+    const { id } = req.params
+    const enquire = await Enquires.findByIdAndDelete(id)
+    res.json(enquire)
+})
 //user details 
 app.get('/api/user', authenticateToken, async (req, res) => {
     try {
@@ -214,19 +241,6 @@ app.post('/api/check' , async (req ,res) =>{
     const savecheck = await newcheck.save()
     res.json(savecheck)
 })
-
-//middleware users
-app.get('/api/admin/dashboard', authenticateToken, authorizeRoles('admin'), (req, res) => {
-    res.json({ message: 'Welcome Admin!' });
-});
-
-app.get('/api/teacher/dashboard', authenticateToken, authorizeRoles('teacher'), (req, res) => {
-    res.json({ message: 'Welcome Teacher!' });
-});
-
-app.get('/api/student/dashboard', authenticateToken, authorizeRoles('student'), (req, res) => {
-    res.json({ message: 'Welcome Student!' });
-});
 
 // Students
 app.get('/api/students', async (req, res) => {
@@ -330,6 +344,34 @@ app.post('/api/teachers', upload.single('profilePicture'), async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 });
+
+//chart for students
+app.get('/api/students-count', async (req, res) => {
+    try {
+        const courses = await Course.find().populate('students', '_id');
+        const studentCounts = courses.map((course) => ({
+            _id: course._id,
+            name: course.name,
+            studentCount: course.students.length,
+        }));
+
+        res.json(studentCounts);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch student counts' });
+    }
+});
+
+//chart for teachers 
+app.get('/api/teachers-count' , async(req,res)=>{
+    const courses = await Course.find().populate('teachers' , '_id');
+    const teachercounts = courses.map((course) =>({
+        _id: course._id,
+        name: course.name,
+        teachercount: course.teachers.length,
+    }))
+    res.json(teachercounts)
+})
 
 // Courses
 app.get('/api/courses', async (req, res) => {

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Graph from './graph';
+import Tgraph from './teachergraph';
 
 function Dashboard() {
   const [counts, setCounts] = useState({
@@ -9,11 +11,18 @@ function Dashboard() {
     notices: 0,
   });
 
+  const token = localStorage.getItem('token')
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
   useEffect(() => {
     async function fetchCounts() {
       try {
         const [studentsRes, teachersRes, coursesRes, noticesRes] = await Promise.all([
-          axios.get('http://localhost:3001/api/students'),
+          axios.get('http://localhost:3001/api/students', {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }),
           axios.get('http://localhost:3001/api/teachers'),
           axios.get('http://localhost:3001/api/courses'),
           axios.get('http://localhost:3001/api/notices'),
@@ -31,36 +40,43 @@ function Dashboard() {
     }
 
     fetchCounts();
-  }, []);
+  }, [token]);
 
   return (
-    <div className="dashboard">
-    <div className="card red">
-      <div className="icon">👩‍🎓</div>
-      <p>{counts.students}</p>
-      <div className="title">Total Students</div>
-      <a href="/students" class="more-info">More Info →</a>
+    <main className='main-dashboard'>
+      <div className="dashboard">
+      <div className="card red">
+        <div className="icon">👩‍🎓</div>
+        <p>{counts.students}</p>
+        <div className="title">Total Students</div>
+      </div>
+      <div className="card blue">
+        <div className="icon">👨‍🏫</div>
+        <p>{counts.teachers}</p>
+        <div className="title">Total Staff</div>
+      </div>
+      <div className="card gray">
+        <div className="icon">📚</div>
+        <p>{counts.courses}</p>
+        <div className="title">Total Courses</div>
+      </div>
+      <div className="card pink">
+        <div className="icon">📘</div>
+        <p>{counts.notices}</p>
+        <div className="title">Total Notices</div>
+      </div>
     </div>
-    <div className="card blue">
-      <div className="icon">👨‍🏫</div>
-      <p>{counts.teachers}</p>
-      <div className="title">Total Staff</div>
-      <a href="/teachers" class="more-info">More Info →</a>
-    </div>
-    <div className="card gray">
-      <div className="icon">📚</div>
-      <p>{counts.courses}</p>
-      <div className="title">Total Courses</div>
-      <a href="/courses" class="more-info">More Info →</a>
-    </div>
-    <div className="card pink">
-      <div className="icon">📘</div>
-      <p>{counts.notices}</p>
-      <div className="title">Total Notices</div>
-      <a href="/notices" class="more-info">More Info →</a>
-    </div>
-  </div>
-  
+    <section className="charts-section">
+        <div className="chart">
+          <h3>Students per course</h3>
+           <Graph />
+        </div>
+        <div className="chart">
+          <h3>Teachers per course</h3>
+            <Tgraph />
+        </div>
+    </section>
+  </main>
   );
 }
 

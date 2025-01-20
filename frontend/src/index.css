@@ -99,8 +99,8 @@ body {
 }
 
 .sidebar ul li:hover,
-.sidebar ul li.active {
-  background: #2563eb;
+.sidebar ul li.a {
+  background: #7197e7;
   color: #fff;
   border-radius: 8px;
 }
@@ -155,6 +155,7 @@ body {
   gap: 20px;
   flex-wrap: wrap;
   margin-top: 20px;
+  margin-bottom: 40px;
 }
 
 .card {
@@ -696,3 +697,83 @@ tbody td:first-child {
   background-color: #e04344;
 }
 
+/* Charts Section */
+.charts-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.chart {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.bar-chart, .pie-chart {
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #7f8c8d;
+  background-color: #ecf0f1;
+  border-radius: 4px;
+}
+
+/* course */
+.courses {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.courses div {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.courses div:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.courses p {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.courses a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.courses a:hover {
+  text-decoration: underline;
+}
+
+.courses button {
+  display: inline-block;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #ff4d4d;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.courses button:hover {
+  background-color: #e63939;
+}

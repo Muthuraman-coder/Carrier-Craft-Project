@@ -66,7 +66,7 @@ const Signup = () => {
             console.log(response.data);
             setSuccess('Register successful! Redirecting...');
             if (formData.role === 'student') {
-                setTimeout(() => navigate('/students'), 2000);
+                setTimeout(() => navigate('/students'), 1000);
             } else if (formData.role === 'teacher') {
                 setTimeout(() => navigate('/teachers'), 2000);
             }
@@ -144,7 +144,7 @@ const Signup = () => {
                                 </option>
                             ))}
                         </select>
-                        <label>Grade:</label>
+                        <label>CGPA:</label>
                         <input
                             type="text"
                             name="grade"

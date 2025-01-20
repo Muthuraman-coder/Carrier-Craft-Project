@@ -30,36 +30,32 @@ function Students() {
 
   return (
     <div >
-  <h2>Student List</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Course</th>
-        <th>CGPA</th>
-        <th>Email</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {students.map((student) => (
-        <tr key={student._id}>
-          <td>
-            <Link to={`/students/${student._id}`}>{student.name}</Link>
-          </td>
-          {student.course.map(c =>(
-            <td key={c._id}>{c.name ? c.name : 'course not selected'}</td>
-          ))}
-          <td>{student.grade}</td>
-          <td>{student.email}</td>
-          <td>
-            <button onClick={() => handledelete(student._id)}>Delete</button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+        <h2>Student List</h2>
+        <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Course</th>
+                <th>CGPA</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {students.map((student) => (
+             <tr key={student._id}>
+                <td><Link to={`/students/${student._id}`}>{student.name}</Link></td>
+                {student.course.map(c =>(
+                <td key={c._id}>{c.name ? c.name : 'course not selected'}</td>
+                ))}
+                <td>{student.grade}</td>
+                <td>{student.email}</td>
+                <td><button onClick={() => handledelete(student._id)}>Delete</button></td>
+            </tr>
+            ))}
+        </tbody>
+        </table>
+    </div>
   );
 }
 

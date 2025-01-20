@@ -29,9 +29,7 @@ function Courses() {
   }
 
   return (
-    <div className='dashboard'>
-      <div className="card blue">
-        <div className="icon">📚</div>
+      <div className="courses">
         {courses.map((course) => (
             <div  key={course._id}>
               <Link to={`/courses/${course._id}`}>
@@ -41,7 +39,6 @@ function Courses() {
             </div>
         ))}
       </div>
-    </div>
   );
 }
 
