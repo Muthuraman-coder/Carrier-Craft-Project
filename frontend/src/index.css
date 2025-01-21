@@ -34,76 +34,110 @@ body {
   scrollbar-color: #1f2937 #374151;
 }
 
-.sidebar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-  background-color: #1c66cd;
-  border-radius: 8px;
-}
-
-.sidebar .logo {
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #10b981;
-}
-
-.sidebar .admin-header {
+.admin-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 15px;
-  background: linear-gradient(to bottom, #1e40af, #2563eb);
-  border-radius: 8px;
-  margin-bottom: 20px; 
+  padding: 10px;
+  background-color: #2587ea;
+  color: white;
+  margin-bottom: 20px;
 }
 
-.sidebar .admin-header img {
-  width: 60px;
-  height: 60px;
-  border-radius: 100%;
+.admin-header img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
   margin-bottom: 10px;
 }
 
-.sidebar .admin-header h2 {
-  font-size: 16px;
-  font-weight: bold;
-  color: #d1d5db;
+.admin-header h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: white;
 }
 
-.sidebar .admin-header span {
-  font-size: 14px;
-  color: #9ca3af;
-}
-
-.sidebar ul {
+/* Menu Styling */
+.sidebar-menu {
   list-style: none;
   padding: 0;
+  margin: 0;
+  flex-grow: 1;
+  overflow-y: auto; /* Enables vertical scrolling */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #1677a0 #3e62c5; /* Firefox */
 }
 
-.sidebar ul li {
+/* Custom scrollbar for Webkit browsers (Chrome, Safari) */
+.sidebar-menu::-webkit-scrollbar {
+  width: 8px; /* width of the scrollbar */
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+  background-color: #1670a0; /* color of the scroll thumb */
+  border-radius: 10px; /* rounded corners */
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+  background-color: #5888b8; /* color of the track (background of scrollbar) */
+}
+
+/* Menu Item Styling */
+.menu-item {
   padding: 15px 20px;
   cursor: pointer;
-  font-size: 16px;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.sidebar ul li a {
+.menu-item:hover {
+  background-color: #1abc9c;
+}
+
+.menu-item.active {
+  background-color: #16a085;
+}
+
+.menu-link {
   text-decoration: none;
   color: white;
   display: flex;
   align-items: center;
-  gap: 10px;
+  width: 100%;
 }
 
-.sidebar ul li:hover,
-.sidebar ul li.a {
-  background: #7197e7;
-  color: #fff;
-  border-radius: 8px;
+.menu-icon {
+  margin-right: 15px;
+  font-size: 1.4rem;
 }
+
+.menu-item span {
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+}
+
+/* Add media query to handle responsiveness */
+@media (max-width: 768px) {
+  .sidebar {
+      width: 200px;
+  }
+
+  .menu-item {
+      padding: 12px 15px;
+  }
+
+  .menu-icon {
+      font-size: 1.2rem;
+  }
+
+  .menu-item span {
+      font-size: 0.9rem;
+  }
+}
+
 
 /* Main Content */
 .main-content {

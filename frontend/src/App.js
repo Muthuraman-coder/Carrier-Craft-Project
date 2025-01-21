@@ -3,10 +3,9 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Sidebar from './components/Sidebar';
 import Header from './components/Header'; 
 import Login from './components/Login';
+import TeacherDashboard from './components/TeacherDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminDashboard from './components/AdminDashboard';
-import TeacherDashboard from './components/TeacherDashboard';
-import StudentDashboard from './components/StudentDashboard';
 import AddStudent from './components/AddStudent';
 import AddTeacher from './components/AddTeacher'; 
 import AddNotice from './components/AddNotice'; 
@@ -27,6 +26,11 @@ import Centres from './components/signpages/centres';
 import Help from './components/signpages/help';
 import AboutUs from './components/signpages/about';
 import Graph from './components/graph';
+import StudentDashboard from './components/Student/s-dashboard';
+import Schedule from './components/Student/schedule';
+import Assignments from './components/Student/assignments';
+import PostAssignment from './components/Teacher/Postassign';
+import PostSchedule from './components/Teacher/postschedule';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -78,9 +82,13 @@ function App() {
             <Routes>
               <Route path="/" element={<Navigate to={`/${userRole}`} />} />
               <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/teacher" element={<ProtectedRoute role="teacher"><TeacherDashboard /></ProtectedRoute>} />
+              <Route path="/teacher" element={<TeacherDashboard />} />
               <Route path="/student" element={<ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/schedule" element={<Schedule />} />
+              <Route path="/assignment" element={<Assignments />} />
+              <Route path="/postassign" element={<PostAssignment />} />
+              <Route path="/postschedule" element={<PostSchedule />} />
               <Route path="/enquires" element={<Enquires />} />
               <Route path="/add-student" element={<AddStudent />} />
               <Route path="/add-teacher" element={<AddTeacher />} />
