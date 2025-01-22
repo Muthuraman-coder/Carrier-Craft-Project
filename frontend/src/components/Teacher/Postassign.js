@@ -1,76 +1,97 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-function PostAssignment() {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [course, setCourse] = useState('');
-    const [dueDate, setDueDate] = useState('');
-    const [message, setMessage] = useState('');
+const PostAssignment = () => {
+    const [courses, setCourses] = useState([]);
+    const [teachers, setTeachers] = useState([]);
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        course: '',
+        dueDate: '',
+        assignedBy: '',
+    });
+
+    useEffect(() => {
+
+        const fetchCoursesAndTeachers = async () => {
+            try {
+                const [coursesResponse, teachersResponse] = await Promise.all([
+                    axios.get('http://localhost:3001/api/courses'),
+                    axios.get('http://localhost:3001/api/teachers'),
+                ]);
+                setCourses(coursesResponse.data);
+                setTeachers(teachersResponse.data);
+            } catch (error) {
+                console.error('Error fetching courses and teachers:', error);
+            }
+        };
+
+        fetchCoursesAndTeachers();
+    }, []);
+
+    const handleInputChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
-            const response = await axios.post('http://localhost:3001/api/assignments', {
-                title,
-                description,
-                course,
-                dueDate,
-            });
-            console.log(response)
-            setMessage('Assignment posted successfully!');
+            await axios.post('http://localhost:3001/api/assignments', formData);
+            setFormData({ title: '', description: '', course: '', dueDate: '', assignedBy: '' });
         } catch (error) {
-            console.error('Error posting assignment:', error);
-            setMessage('Failed to post assignment.');
+            console.error('Error creating assignment:', error);
         }
     };
 
     return (
         <div>
-            <h2>Post New Assignment</h2>
+            <h1>Assignments</h1>
+            
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Title</label>
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Description</label>
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Course</label>
-                    <input
-                        type="text"
-                        value={course}
-                        onChange={(e) => setCourse(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Due Date</label>
-                    <input
-                        type="date"
-                        value={dueDate}
-                        onChange={(e) => setDueDate(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit">Post Assignment</button>
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                />
+                <textarea
+                    name="description"
+                    placeholder="Description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                ></textarea>
+                <select
+                    name="course"
+                    value={formData.course}
+                    onChange={handleInputChange}
+                >
+                    <option value="">Select Course</option>
+                    {courses.map((course) => (
+                        <option key={course._id} value={course._id}>{course.name}</option>
+                    ))}
+                </select>
+                <input
+                    type="date"
+                    name="dueDate"
+                    value={formData.dueDate}
+                    onChange={handleInputChange}
+                />
+                <select
+                    name="assignedBy"
+                    value={formData.assignedBy}
+                    onChange={handleInputChange}
+                >
+                    <option value="">Select Teacher</option>
+                    {teachers.map((teacher) => (
+                        <option key={teacher._id} value={teacher._id}>{teacher.name}</option>
+                    ))}
+                </select>
+                <button type="submit">Create Assignment</button>
             </form>
-
-            {message && <p>{message}</p>}
         </div>
     );
-}
+};
 
 export default PostAssignment;

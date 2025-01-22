@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { FaUserGraduate, FaChalkboardTeacher, FaBook, FaStickyNote } from 'react-icons/fa';
 import Graph from './graph';
 import Tgraph from './teachergraph';
 
@@ -11,7 +12,7 @@ function Dashboard() {
     notices: 0,
   });
 
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('token');
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
   useEffect(() => {
@@ -20,8 +21,8 @@ function Dashboard() {
         const [studentsRes, teachersRes, coursesRes, noticesRes] = await Promise.all([
           axios.get('http://localhost:3001/api/students', {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           }),
           axios.get('http://localhost:3001/api/teachers'),
           axios.get('http://localhost:3001/api/courses'),
@@ -43,42 +44,41 @@ function Dashboard() {
   }, [token]);
 
   return (
-    <main className='main-dashboard'>
+    <main className="main-dashboard">
       <div className="dashboard">
-      <div className="card red">
-        <div className="icon">👩‍🎓</div>
-        <p>{counts.students}</p>
-        <div className="title">Total Students</div>
+        <div className="card red">
+          <div className="icon"><FaUserGraduate /></div>
+          <p>{counts.students}</p>
+          <div className="title">Total Students</div>
+        </div>
+        <div className="card blue">
+          <div className="icon"><FaChalkboardTeacher /></div>
+          <p>{counts.teachers}</p>
+          <div className="title">Total Staff</div>
+        </div>
+        <div className="card gray">
+          <div className="icon"><FaBook /></div>
+          <p>{counts.courses}</p>
+          <div className="title">Total Courses</div>
+        </div>
+        <div className="card pink">
+          <div className="icon"><FaStickyNote /></div>
+          <p>{counts.notices}</p>
+          <div className="title">Total Notices</div>
+        </div>
       </div>
-      <div className="card blue">
-        <div className="icon">👨‍🏫</div>
-        <p>{counts.teachers}</p>
-        <div className="title">Total Staff</div>
-      </div>
-      <div className="card gray">
-        <div className="icon">📚</div>
-        <p>{counts.courses}</p>
-        <div className="title">Total Courses</div>
-      </div>
-      <div className="card pink">
-        <div className="icon">📘</div>
-        <p>{counts.notices}</p>
-        <div className="title">Total Notices</div>
-      </div>
-    </div>
-    <section className="charts-section">
+      <section className="charts-section">
         <div className="chart">
           <h3>Students per course</h3>
-           <Graph />
+          <Graph />
         </div>
         <div className="chart">
           <h3>Teachers per course</h3>
-            <Tgraph />
+          <Tgraph />
         </div>
-    </section>
-  </main>
+      </section>
+    </main>
   );
 }
 
 export default Dashboard;
-

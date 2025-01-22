@@ -84,22 +84,18 @@ const assignmentSchema = new mongoose.Schema({
     submissions: [{
         studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
         submittedAt: { type: Date, default: Date.now },
-        file: { type: String }, // Store file path if submission includes a file
+        file: { type: String }, 
         grade: { type: Number, default: null },
     }],
 });
 
-const Assignment = mongoose.model('Assignment', assignmentSchema);
-
 const scheduleSchema = new mongoose.Schema({
-    course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
+    schedule: { type: String, required: true },
     date: { type: Date, required: true },
-    time: { type: String, required: true }, // e.g. "10:00 AM"
+    time: { type: String, required: true },
     location: { type: String },
     description: { type: String },
 });
-
-const Schedule = mongoose.model('Schedule', scheduleSchema);
 
 const checkschema = new mongoose.Schema({
     name:{ type : String, required:true}
@@ -112,7 +108,8 @@ const Admin = mongoose.model('Admin', adminSchema);
 const Notice = mongoose.model('Notice', noticeSchema);
 const check = mongoose.model('check', checkschema);
 const Enquires = mongoose.model('enquries' , Enquire);
-
+const Assignment = mongoose.model('Assignment', assignmentSchema);
+const Schedule = mongoose.model('Schedule', scheduleSchema);
 
 //middleware authentication
 const authenticateToken = (req, res, next) => {
@@ -345,26 +342,42 @@ app.get('/api/student-dashboard', authenticateToken, async (req, res) => {
     }
 });
 
-// Get all assignments for a student
-app.get('/api/assignments/student/:studentId', authenticateToken, async (req, res) => {
+//student assignments handling
+// Get all assignments
+app.get('/api/assignments', async (req, res) => {
     try {
-        const student = await Student.findById(req.params.studentId);
-        if (!student) return res.status(404).json({ message: 'Student not found' });
+        const assignments = await Assignment.find()
+            .populate('course', 'name')
+            .populate('assignedBy', 'name email');
+        res.status(200).json(assignments);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
-        const assignments = await Assignment.find({ course: { $in: student.course } });
-        res.json(assignments);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+// Submit an assignment
+app.post('/api/assignments/:id/submit', async (req, res) => {
+    try {
+        const { studentId, file } = req.body;
+        const assignment = await Assignment.findById(req.params.id);
+
+        if (!assignment) {
+            return res.status(404).json({ message: 'Assignment not found' });
+        }
+
+        assignment.submissions.push({ studentId, file });
+        await assignment.save();
+
+        res.status(200).json({ message: 'Submission successful', assignment });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
 // Get schedule for a student
-app.get('/api/schedule/student/:studentId', authenticateToken, async (req, res) => {
+app.get('/api/schedule', authenticateToken, async (req, res) => {
     try {
-        const student = await Student.findById(req.params.studentId);
-        if (!student) return res.status(404).json({ message: 'Student not found' });
-
-        const schedules = await Schedule.find({ course: { $in: student.course } });
+        const schedules = await Schedule.find( );
         res.json(schedules);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -405,11 +418,11 @@ app.delete('/api/teachers/:id' , async (req , res) =>{
 })
 
 // Teacher creates a schedule
-app.post('/api/schedule', authenticateToken, authorizeRoles('teacher'), async (req, res) => {
-    const { course, date, time, location, description } = req.body;
+app.post('/api/schedule', async (req, res) => {
+    const { schedule, date, time, location, description } = req.body;
     try {
         const newSchedule = new Schedule({
-            course,
+            schedule,
             date,
             time,
             location,
@@ -417,28 +430,67 @@ app.post('/api/schedule', authenticateToken, authorizeRoles('teacher'), async (r
         });
 
         const savedSchedule = await newSchedule.save();
+        console.log("schedule data",savedSchedule)
         res.status(201).json(savedSchedule);
     } catch (err) {
+        console.log(err)
         res.status(500).json({ error: err.message });
     }
 });
 
-// Teacher creates an assignment
-app.post('/api/assignments', authenticateToken, authorizeRoles('teacher'), async (req, res) => {
-    const { title, description, course, dueDate } = req.body;
+//teachers assignments handling
+// Create a new assignment
+app.post('/api/assignments', async (req, res) => {
     try {
-        const newAssignment = new Assignment({
-            title,
-            description,
-            course,
-            dueDate,
-            assignedBy: req.user.id,
-        });
+        const { title, description, course, dueDate, assignedBy } = req.body;
+        const newAssignment = new Assignment({ title, description, course, dueDate, assignedBy });
+        await newAssignment.save();
+        res.status(201).json(newAssignment);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
-        const savedAssignment = await newAssignment.save();
-        res.status(201).json(savedAssignment);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+// Get a specific assignment by ID
+app.get('/api/assignments/:id', async (req, res) => {
+    try {
+        const assignment = await Assignment.findById(req.params.id)
+            .populate('course', 'name')
+            .populate('assignedBy', 'name email')
+            .populate('submissions.studentId', 'name email');
+
+        if (!assignment) {
+            return res.status(404).json({ message: 'Assignment not found' });
+        }
+
+        res.status(200).json(assignment);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Update a submission (e.g., grade the submission)
+app.patch('/api/assignments/:id/submissions/:submissionId', async (req, res) => {
+    try {
+        const { grade } = req.body;
+        const assignment = await Assignment.findById(req.params.id);
+
+        if (!assignment) {
+            return res.status(404).json({ message: 'Assignment not found' });
+        }
+
+        const submission = assignment.submissions.id(req.params.submissionId);
+
+        if (!submission) {
+            return res.status(404).json({ message: 'Submission not found' });
+        }
+
+        submission.grade = grade;
+        await assignment.save();
+
+        res.status(200).json({ message: 'Submission graded successfully', assignment });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
