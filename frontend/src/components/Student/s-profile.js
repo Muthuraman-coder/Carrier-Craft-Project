@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-function SAttendance() {
+function StudentProfile() {
   const { id } = useParams(); 
   const [student, setStudent] = useState(null);
 
@@ -26,16 +26,16 @@ function SAttendance() {
 
   return (
     <div className='resume-format'>
-      <h4>Attendance:</h4>
-      <ul>
-        {student.attendance.map((record, index) => (
-          <li key={index}>
-            {new Date(record.date).toLocaleDateString()}: {record.status}
-          </li>
-        ))}
-      </ul>
+     <img src={`http://localhost:3001${student.profilePicture}`} alt="profile" />
+      <h2>{student.name}'s Details</h2>
+      <p>Age: {student.age}</p>
+      <p>Grade: {student.grade}</p>
+      <p>Email: {student.email}</p>
+      {student.course.map((c) =>(
+        <p key={c._id}>Course: {c.name}</p>
+      ))}
     </div>
   );
 }
 
-export default SAttendance;
+export default StudentProfile;

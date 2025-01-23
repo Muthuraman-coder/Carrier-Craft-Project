@@ -39,12 +39,12 @@ ul {
 }
 
 .logo-carrier {
-  color: #1c7430; 
+  color:  #007bff; 
   margin-right: 0.2rem;
 }
 
 .logo-craft {
-  color: #e91e63; 
+  color:  #004c9e; 
 }
 
 .navbar ul {
@@ -63,7 +63,7 @@ ul {
 
 .navbar ul li button {
   padding: 0.75rem 1.5rem;
-  background-color: #1c7430;
+  background: linear-gradient(45deg, #007bff, #0056b3);
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -73,7 +73,7 @@ ul {
 }
 
 .navbar ul li a:hover {
-  color: #007bff; /* Blue hover effect */
+  color: #0056b3; /* Blue hover effect */
 }
 
 /* Head Page Styling */
@@ -90,13 +90,13 @@ ul {
 
 .head-page h1 {
   font-size: 2.5rem;
-  color: #2c823f;
+  color: #0056b3;
   margin-bottom: 10px;
 }
 
 .head-page h2 {
   font-size: 1.8rem;
-  color: #2c823f;
+  color: #0056b3;
   margin-top: 20px;
   margin-bottom: 10px;
 }
@@ -164,7 +164,7 @@ ul {
 
 .explore-btn {
   padding: 0.75rem 1.5rem;
-  background-color: #007bff;
+  background: linear-gradient(45deg, #007bff, #0056b3);
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -175,7 +175,7 @@ ul {
 }
 
 .explore-btn:hover {
-  background-color: #0056b3;
+  background-color: #003d7f;
 }
 
 /* Form Section */
@@ -192,7 +192,7 @@ ul {
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  color: #1c7430;
+  color: #0056b3;
   text-align: center;
 }
 
@@ -213,7 +213,7 @@ form select {
 
 form button {
   padding: 0.75rem 1.5rem;
-  background-color: #1c7430;
+  background: linear-gradient(45deg, #007bff, #0056b3);
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -223,7 +223,7 @@ form button {
 }
 
 form button:hover {
-  background-color: #145623;
+  background-color: #003d7f;
 }
 
 .terms {

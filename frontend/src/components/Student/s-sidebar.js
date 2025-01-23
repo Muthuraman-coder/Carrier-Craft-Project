@@ -9,7 +9,7 @@ const S_Sidebar = () => {
         { name: 'Dashboard', path:'/student' ,icon: <FaHome /> },
         { name: 'Schedule', path:'/schedule', icon: <FaCalendarAlt /> },
         { name: 'Assignments',path:'/assignment', icon: <FaBook /> },
-        { name: 'Profile',path:'/profile', icon: <FaUser /> },
+        { name: 'Profile',path:'/s-profile', icon: <FaUser /> },
         { name: 'Notifications', path:'/notices' ,icon: <FaBell /> },
         { name: 'Attendance',path:'/s-attendance', icon: <FaCalendarAlt /> },
     ];

@@ -323,15 +323,15 @@ app.post('/api/students', upload.single('profilePicture'), async (req, res) => {
     }
 });
 
-// Dashboard for student
-app.get('/api/student-dashboard', authenticateToken, async (req, res) => {
+// profile for student
+app.get('/api/student-profile', authenticateToken, async (req, res) => {
     try {
         const { id, role } = req.user;
         if (role !== 'student') {
             return res.status(403).json({ message: 'Permission Denied' });
         }
 
-        const student = await Student.findById(id).populate('course attendance');
+        const student = await Student.findById(id).populate('course');
         if (!student) {
             return res.status(404).json({ message: 'Student not found' });
         }
@@ -438,6 +438,39 @@ app.post('/api/schedule', async (req, res) => {
     }
 });
 
+//teacher attendance
+app.get('/api/students/attendance/teacher', async (req, res) => {
+    try {
+        const {teacherId} = req.user?.id;
+        console.log('teacherid',teacherId)
+        if (!teacherId) {
+            return res.status(400).json({ message: 'Teacher ID not provided' });
+        }
+
+        const teacher = await Teacher.findById(teacherId).populate('course');
+        console.log('teacher',teacher)
+        if (!teacher) {
+            return res.status(404).json({ message: 'Teacher not found' });
+        }
+
+        const teacherCourses = teacher.course.map(course => course._id);
+        console.log('teachercourse',teacherCourses)
+        if (!teacherCourses.length) {
+            return res.status(404).json({ message: 'No courses found for this teacher' });
+        }
+
+        const students = await Student.find({ course: { $in: teacherCourses } })
+            .populate('course', 'name');
+            console.log('students ',students)
+        res.status(200).json({ students });
+    } catch (error) {
+        console.log(error)
+        console.error('Server Error:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+
 //teachers assignments handling
 // Create a new assignment
 app.post('/api/assignments', async (req, res) => {
@@ -464,6 +497,25 @@ app.get('/api/assignments/:id', async (req, res) => {
         }
 
         res.status(200).json(assignment);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// profile for teacher
+app.get('/api/teacher-profile', authenticateToken, async (req, res) => {
+    try {
+        const { id, role } = req.user;
+        if (role !== 'teacher') {
+            return res.status(403).json({ message: 'Permission Denied' });
+        }
+
+        const teacher = await Teacher.findById(id).populate('course');
+        if (!teacher) {
+            return res.status(404).json({ message: 'teacher not found' });
+        }
+
+        res.json(teacher);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

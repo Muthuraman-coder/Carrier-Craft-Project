@@ -11,8 +11,7 @@ const StudentDashboard = () => {
         if (!token) {
             navigate('/login');
         } else {
-            axios
-                .get('http://localhost:3001/api/student-dashboard', { headers: { Authorization: `Bearer ${token}` } })
+            axios.get('http://localhost:3001/api/student-profile', { headers: { Authorization: `Bearer ${token}` } })
                 .then((response) => {
                     setStudentData(response.data);
                 })
