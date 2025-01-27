@@ -35,6 +35,9 @@ import StudentProfile from './components/Student/s-profile';
 import SAttendance from './components/Student/s-attendance';
 import Tprofile from './components/Teacher/t-profile';
 import TAttendance from './components/Teacher/t-attendance';
+import TAtDetails from './components/Teacher/t-atdetails';
+import AssignmentSubmit from './components/Student/summitassign';
+import AssignmentDetails from './components/Teacher/getassign';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -107,7 +110,9 @@ function App() {
               <Route path="/teacher" element={<TeacherDashboard />} />
               <Route path="/t-profile" element={<Tprofile />} />
               <Route path="/t-attendance" element={<TAttendance />} />
+              <Route path="/t-atdetails" element={<TAtDetails />} />
               <Route path="/postassign" element={<PostAssignment />} />
+              <Route path="/assignment/:id" element={<AssignmentDetails />} />
               <Route path="/postschedule" element={<PostSchedule />} />
               {/* student datas */}
               <Route path="/student" element={<ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>} />
@@ -115,6 +120,7 @@ function App() {
               <Route path="/s-attendance" element={<SAttendance />} />
               <Route path="/schedule" element={<Schedule />} />
               <Route path="/assignment" element={<Assignments />} />
+              <Route path="/assignment/:id/summit" element={<AssignmentSubmit />} />
             </Routes>
           </div>
         </div>

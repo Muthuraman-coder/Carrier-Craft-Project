@@ -31,7 +31,7 @@ body {
   overflow-y: auto;
   scroll-behavior: smooth;
   scrollbar-width: thin;
-  scrollbar-color: #1f2937 #374151;
+  scrollbar-color: #006aff #594ae6;
 }
 
 .admin-header {
@@ -79,7 +79,7 @@ body {
 }
 
 .sidebar-menu::-webkit-scrollbar-track {
-  background-color: #5888b8; /* color of the track (background of scrollbar) */
+  background-color: #167de3; /* color of the track (background of scrollbar) */
 }
 
 /* Menu Item Styling */

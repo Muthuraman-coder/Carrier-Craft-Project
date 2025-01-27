@@ -76,15 +76,15 @@ const noticeSchema = new mongoose.Schema({
 });
 
 const assignmentSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
-    dueDate: { type: Date, required: true },
-    assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher', required: true },
+    title: { type: String, },
+    description: { type: String, },
+    course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course',  },
+    dueDate: { type: Date,  },
+    assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher',},
     submissions: [{
         studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
         submittedAt: { type: Date, default: Date.now },
-        file: { type: String }, 
+        setfile: { type: String }, 
         grade: { type: Number, default: null },
     }],
 });
@@ -287,15 +287,21 @@ app.get('/api/students/:id', async (req, res) => {
 
 app.post('/api/students/:id/attendance', async (req, res) => {
     try {
-        const { date, status } = req.body;
-        const student = await Student.findById(req.params.id);
-        student.attendance.push({ date, status });
-        await student.save();
-        res.json({ message: 'Attendance updated successfully', student });
+      const { date, status } = req.body;
+      if (!date || !status) {
+        return res.status(400).json({ message: 'Date and status are required.' });
+      }
+  
+      const student = await Student.findById(req.params.id);
+      student.attendance.push({ date, status });
+      await student.save();
+      console.log("post data" , student)
+      res.json({ message: 'Attendance updated successfully', student });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+      console.error("post error", err);
+      res.status(500).json({ error: err.message });
     }
-});
+  });  
 
 app.delete('/api/students/:id' , async (req , res) =>{
     try{
@@ -324,7 +330,7 @@ app.post('/api/students', upload.single('profilePicture'), async (req, res) => {
 });
 
 // profile for student
-app.get('/api/student-profile', authenticateToken, async (req, res) => {
+app.get('/api/student-profile', authenticateToken ,async (req, res) => {
     try {
         const { id, role } = req.user;
         if (role !== 'student') {
@@ -343,36 +349,28 @@ app.get('/api/student-profile', authenticateToken, async (req, res) => {
 });
 
 //student assignments handling
-// Get all assignments
-app.get('/api/assignments', async (req, res) => {
-    try {
-        const assignments = await Assignment.find()
-            .populate('course', 'name')
-            .populate('assignedBy', 'name email');
-        res.status(200).json(assignments);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
 // Submit an assignment
-app.post('/api/assignments/:id/submit', async (req, res) => {
+app.post('/api/assignments/:id/submit', authenticateToken, upload.single('setfile'),async (req, res) => {
     try {
-        const { studentId, file } = req.body;
+        const { studentId , grade } = req.body;
+        let setfile = null;
+        if (req.file) {
+            setfile = `/uploads/${req.file.filename}`;
+        }
         const assignment = await Assignment.findById(req.params.id);
 
         if (!assignment) {
             return res.status(404).json({ message: 'Assignment not found' });
         }
 
-        assignment.submissions.push({ studentId, file });
+        assignment.submissions.push({ studentId, setfile ,grade});
         await assignment.save();
-
+        console.log('post summit details',assignment)
         res.status(200).json({ message: 'Submission successful', assignment });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+}); 
 
 // Get schedule for a student
 app.get('/api/schedule', authenticateToken, async (req, res) => {
@@ -439,29 +437,18 @@ app.post('/api/schedule', async (req, res) => {
 });
 
 //teacher attendance
-app.get('/api/students/attendance/teacher', async (req, res) => {
+app.get('/api/teacher-attendance',authenticateToken , async (req, res) => {
     try {
-        const {teacherId} = req.user?.id;
-        console.log('teacherid',teacherId)
-        if (!teacherId) {
-            return res.status(400).json({ message: 'Teacher ID not provided' });
-        }
-
-        const teacher = await Teacher.findById(teacherId).populate('course');
-        console.log('teacher',teacher)
+        const { id } = req.user;
+        const teacher = await Teacher.findById(id).populate('course');
         if (!teacher) {
             return res.status(404).json({ message: 'Teacher not found' });
         }
-
         const teacherCourses = teacher.course.map(course => course._id);
-        console.log('teachercourse',teacherCourses)
         if (!teacherCourses.length) {
             return res.status(404).json({ message: 'No courses found for this teacher' });
-        }
-
-        const students = await Student.find({ course: { $in: teacherCourses } })
-            .populate('course', 'name');
-            console.log('students ',students)
+        } 
+        const students = (await Student.find({ course: { $in: teacherCourses } }).select('name course attendance').populate('course', 'name'));
         res.status(200).json({ students });
     } catch (error) {
         console.log(error)
@@ -484,6 +471,21 @@ app.post('/api/assignments', async (req, res) => {
     }
 });
 
+app.get('/api/assignments', authenticateToken,async (req, res) => {
+    try {
+        const assignments = await Assignment.find()
+            .populate('course', 'name')
+            .populate('assignedBy', 'name email');
+        res.status(200).json(assignments);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/api/assignments/:id' ,authenticateToken, async(req,res) =>{
+    const delass = await Assignment.findByIdAndDelete(req.params.id)
+})
+
 // Get a specific assignment by ID
 app.get('/api/assignments/:id', async (req, res) => {
     try {
@@ -501,6 +503,44 @@ app.get('/api/assignments/:id', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+app.patch('/api/assignments/:id/submissions/:submissionId',authenticateToken, async (req, res) => {
+    const { id, submissionId } = req.params;
+    const { grade } = req.body;
+
+    if (!grade) {
+        return res.status(400).json({ message: 'Grade is required' });
+    }
+
+    try {
+        const assignment = await Assignment.findById(id);
+
+        if (!assignment) {
+            return res.status(404).json({ message: 'Assignment not found' });
+        }
+
+        const submission = assignment.submissions.id(submissionId);
+
+        if (!submission) {
+            return res.status(404).json({ message: 'Submission not found' });
+        }
+
+        submission.grade = grade;
+        await assignment.save();
+
+        res.status(200).json({ message: 'Grade updated successfully', submission });
+    } catch (err) {
+        res.status(500).json({ message: 'Internal server error', error: err.message });
+    }
+});
+
+app.delete('/api/assignments/:id/submissions/:submissionId', authenticateToken,async(req,res) =>{
+    const assignment = await Assignment.findById(req.params.id)
+    assignment.submissions = assignment.submissions.filter(
+        (submission) => submission._id.toString() !== req.params.submissionId
+    );
+    assignment.save()
+})
 
 // profile for teacher
 app.get('/api/teacher-profile', authenticateToken, async (req, res) => {

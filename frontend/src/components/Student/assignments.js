@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function Assignments() {
     const [assignments, setAssignments] = useState([]);
+    const [userRole, setUserRole] = useState(null);
 
     useEffect(() => {
+        const token = localStorage.getItem('token')
+        const role = localStorage.getItem('role')
+        setUserRole(role)
+
         const fetchAssignments = async ( ) => {
             try {
-                const response = await axios.get('http://localhost:3001/api/assignments'); 
+                const response = await axios.get('http://localhost:3001/api/assignments',{headers:{Authorization:`Bearer ${token}`}});
                 setAssignments(response.data);
+                console.log(response.data)
             } catch (error) {
                 console.error('Error fetching assignments', error);
             }
@@ -16,20 +23,66 @@ function Assignments() {
         fetchAssignments();
     }, []);
 
+    const handledelete = (id) =>{
+        const token = localStorage.getItem('token')
+        axios.delete(`http://localhost:3001/api/assignments/${id}`,{headers:{Authorization:`Bearer ${token}`}})
+            .then(() => {
+                setAssignments(assignments.filter((a) => a._id !== id));
+                alert('Deleted successfully');
+            })
+            .catch((error) => {
+                console.error('Error deleting assignment:', error);
+            });
+    }
+
     return (
         <div>
             <h2>Assignments</h2>
-            <div>
-                {assignments.map((assignment) => (
-                    <div key={assignment._id}>
-                        <h3>{assignment.title}</h3>
-                        <p>{assignment.description}</p>
-                        <p><strong>Due Date:</strong> {new Date(assignment.dueDate).toLocaleDateString()}</p>
-                        <p><strong>Course:</strong> {assignment.course?.name}</p>
-                        <p><strong>Assigned By:</strong> {assignment.assignedBy?.name}</p>
-                    </div>
-                ))}
-            </div>
+            <table >
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Due Date</th>
+                        <th>Course</th>
+                        {userRole === 'teacher'?
+                        <th>Sumbitted Students</th>:
+                        <th>Assigned By</th>
+                        }
+                        {userRole === 'teacher'?
+                        <th>Remove</th>:
+                        <th>Submit Assignment</th>
+                        }
+                        {userRole==='student' && (
+                            <th>Grade</th>
+                        )}
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {assignments.map((assignment) => (
+                        <tr key={assignment._id}>
+                            <td>{assignment.title}</td>
+                            <td>{new Date(assignment.dueDate).toLocaleDateString()}</td>
+                            <td>{assignment.course?.name}</td>
+                            {userRole === 'teacher' ? (<td style={{color:'blue'}}>
+                                <Link to={`/assignment/${assignment._id}`}>View Details</Link>
+                            </td>) : <td>{assignment.assignedBy?.name}</td>}
+                            {userRole === 'teacher' && (
+                                <td><button onClick={() =>handledelete(assignment._id)}>Delete</button></td>
+                            )}
+                            {userRole === 'student' && (
+                                <td>{assignment.submissions.map((s , index)=>(<div key={s._id}>{s.setfile ? ('Already summited') : <Link to={`/assignment/${assignment._id}/summit`}><button>summit</button></Link>} </div>))}</td>
+                            )}
+                            {userRole === 'student' && (
+                                <td>
+                                {assignment.submissions.length > 0 ? assignment.submissions.map((s, index) => (
+                                    <div key={index}>{s.grade || ' grade pending!'}</div>)): 'No Submissions Yet'}
+                                </td>
+                            )}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }

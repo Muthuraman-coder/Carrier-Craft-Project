@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaHome, FaBook, FaCalendarAlt, FaBell, FaUser } from 'react-icons/fa';
+import { FaHome, FaBook, FaCalendarAlt, FaBell, FaUser, FaAddressBook, FaBookOpen } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const T_Sidebar = () => {
@@ -8,10 +8,13 @@ const T_Sidebar = () => {
     const menuItems = [
         { name: 'Dashboard', path:'/t-dashboard' ,icon: <FaHome /> },
         { name: 'Add Schedule', path:'/postschedule', icon: <FaCalendarAlt /> },
-        { name: 'Add Assignments',path:'/postassign', icon: <FaBook /> },
+        { name: 'Schedule Details', path:'/schedule', icon: <FaAddressBook /> },
+        { name: 'Add Assignments',path:'/postassign', icon: <FaBookOpen /> },
+        { name: 'Assignment Details',path:'/assignment', icon: <FaBook /> },
         { name: 'Profile',path:'/t-profile', icon: <FaUser /> },
         { name: 'Notifications', path:'/notices' ,icon: <FaBell /> },
-        { name: 'Attendance',path:'/t-attendance', icon: <FaCalendarAlt /> },
+        { name: 'Post Attendance',path:`/t-attendance`, icon: <FaCalendarAlt /> },
+        { name: 'Attendance Details',path:`/t-atdetails`, icon: <FaBook /> },
     ];
 
     const handleItemClick = (item) => {

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 function CourseDetails() {
-  const { id } = useParams(); // Get the course ID from the URL
+  const { id } = useParams(); 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -12,7 +12,7 @@ function CourseDetails() {
       try {
         const response = await axios.get(`http://localhost:3001/api/courses/${id}`);
         console.log(response.data)
-        setCourse(response.data); // Set the course data with populated fields
+        setCourse(response.data); 
         setLoading(false);
       } catch (error) {
         console.error('Error fetching course details:', error);
