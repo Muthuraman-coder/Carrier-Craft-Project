@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Sidebar from './components/Sidebar';
 import Header from './components/Header'; 
 import Login from './components/Login';
-import TeacherDashboard from './components/TeacherDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminDashboard from './components/AdminDashboard';
 import AddStudent from './components/AddStudent';
@@ -26,7 +25,6 @@ import Centres from './components/signpages/centres';
 import Help from './components/signpages/help';
 import AboutUs from './components/signpages/about';
 import Graph from './components/graph';
-import StudentDashboard from './components/Student/s-dashboard';
 import Schedule from './components/Student/schedule';
 import Assignments from './components/Student/assignments';
 import PostAssignment from './components/Teacher/Postassign';
@@ -38,6 +36,8 @@ import TAttendance from './components/Teacher/t-attendance';
 import TAtDetails from './components/Teacher/t-atdetails';
 import AssignmentSubmit from './components/Student/summitassign';
 import AssignmentDetails from './components/Teacher/getassign';
+import TDashboard from './components/Teacher/t-dashboard';
+import SDashboard from './components/Student/s-dashboard';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -107,7 +107,7 @@ function App() {
               <Route path="/notices" element={<Notices />} />
               <Route path="/graph" element={<Graph />} />
               {/* teacher datas */}
-              <Route path="/teacher" element={<TeacherDashboard />} />
+              <Route path="/teacher" element={<TDashboard />} />
               <Route path="/t-profile" element={<Tprofile />} />
               <Route path="/t-attendance" element={<TAttendance />} />
               <Route path="/t-atdetails" element={<TAtDetails />} />
@@ -115,7 +115,7 @@ function App() {
               <Route path="/assignment/:id" element={<AssignmentDetails />} />
               <Route path="/postschedule" element={<PostSchedule />} />
               {/* student datas */}
-              <Route path="/student" element={<ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>} />
+              <Route path="/student" element={<ProtectedRoute role="student"><SDashboard /></ProtectedRoute>} />
               <Route path="/s-profile" element={<StudentProfile />} />
               <Route path="/s-attendance" element={<SAttendance />} />
               <Route path="/schedule" element={<Schedule />} />

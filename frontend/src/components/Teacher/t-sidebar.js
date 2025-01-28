@@ -6,7 +6,7 @@ const T_Sidebar = () => {
     const [activeItem, setActiveItem] = useState('Dashboard');
 
     const menuItems = [
-        { name: 'Dashboard', path:'/t-dashboard' ,icon: <FaHome /> },
+        { name: 'Dashboard', path:'/teacher' ,icon: <FaHome /> },
         { name: 'Add Schedule', path:'/postschedule', icon: <FaCalendarAlt /> },
         { name: 'Schedule Details', path:'/schedule', icon: <FaAddressBook /> },
         { name: 'Add Assignments',path:'/postassign', icon: <FaBookOpen /> },

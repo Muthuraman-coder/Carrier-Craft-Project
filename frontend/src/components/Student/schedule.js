@@ -24,23 +24,35 @@ function Schedule() {
 
     return (
         <div>
-            <h2>Schedule</h2>
+            <h2>Schedules</h2>
             {schedule.length === 0 ? (
                 <p>No upcoming schedules.</p>
             ) : (
-                <ul>
-                    {schedule.map((entry) => (
-                        <li key={entry._id}>
-                            <h1>{entry.schedule}</h1>
-                            <h3>DATE :{new Date(entry.date).toLocaleDateString()}</h3>
-                            <h3>TIME :{entry.time}</h3>
-                            <p>LOCATION :{entry.location}</p>
-                            <p>DESCRIPTION :{entry.description}</p>
-                        </li>
-                    ))}
-                </ul>
-            )}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Location</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                        <tbody>
+                            {schedule.map((entry) => (
+                                <tr key={entry._id}>
+                                    <td>{entry.schedule}</td>
+                                    <td>{new Date(entry.date).toLocaleDateString()}</td>
+                                    <td>{entry.time}</td>
+                                    <td>{entry.location}</td>
+                                    <td>{entry.description}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
         </div>
+
     );
 }
 

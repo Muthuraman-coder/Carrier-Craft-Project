@@ -1,42 +1,42 @@
 import { FaUserGraduate, FaChalkboardTeacher, FaBook, FaStickyNote } from 'react-icons/fa';
-import SAttendanceGraph from './SAG';
-import SAMarksGraph from './ASG';
+import TAttendanceGraph from './TA-graph';
+import TopStudentsChart from './TSgraph';
 
-
-function SDashboard() {
+function TDashboard() {
   
+
   return (
     <main className="main-dashboard">
       <div className="dashboard">
         <div className="card red">
           <div className="icon"><FaUserGraduate /></div>
-          <div className="title">Assginments</div>
+          <div className="title">Add Assginments</div>
         </div>
         <div className="card blue">
           <div className="icon"><FaChalkboardTeacher /></div>
-          <div className="title">Schedule</div>
+          <div className="title">Add Schedule</div>
         </div>
         <div className="card gray">
           <div className="icon"><FaBook /></div>
-          <div className="title">Attendance</div>
+          <div className="title">Take Attendance</div>
         </div>
         <div className="card pink">
           <div className="icon"><FaStickyNote /></div>
-          <div className="title">Notices</div>
+          <div className="title">Attendance Details</div>
         </div>
       </div>
       <section className="charts-section">
         <div className="chart">
           <h3>Attendance Performance</h3>
-            <SAttendanceGraph />
+          <TAttendanceGraph />
         </div>
         <div className="chart">
-          <h3>Top Rank Holders</h3>
-           < SAMarksGraph />
+          <h3><h2>Assignments and Marks</h2></h3>
+          <TopStudentsChart />
         </div>
       </section>
     </main>
   );
 }
 
-export default SDashboard;
+export default TDashboard;

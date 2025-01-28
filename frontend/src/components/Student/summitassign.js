@@ -18,6 +18,7 @@ function AssignmentSubmit() {
             'Authorization': `Bearer ${localStorage.getItem('token')}`, 
           },
         });
+        localStorage.setItem('studentId', response.data._id); 
         setStudentId(response.data._id); 
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -28,9 +29,10 @@ function AssignmentSubmit() {
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem('token')
     async function fetchAssignment() {
       try {
-        const response = await axios.get(`http://localhost:3001/api/assignments/${id}`);
+        const response = await axios.get(`http://localhost:3001/api/assignments/${id}`,{headers:{Authorization:`Bearer ${token}`}});
         setAssignment(response.data);
       } catch (error) {
         console.error('Error fetching assignment:', error);
@@ -77,30 +79,38 @@ function AssignmentSubmit() {
 
   return (
     <div>
-      {assignment ? (
-        <div>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <h2>{assignment.title}</h2>
-              <p>{assignment.description}</p>
-              <label htmlFor="setfile">Choose File:</label>
-              <input
-                type="file"
-                id="setfile"
-                name="setfile"
-                accept=".pdf,.doc,.docx,.txt,.jpg,.png,.jpeg"
-                onChange={handleFileChange}
-                required
-              />
-            </div>
-            <button type="submit">Submit</button>
-          </form>
-          {message && <p>{message}</p>}
-        </div>
-      ) : (
-        <p>Loading assignment details...</p>
-      )}
+  {assignment ? (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>Title:</strong></td>
+              <td>{assignment.title}</td>
+            </tr>
+            <tr>
+              <td><strong>Description:</strong></td>
+              <td>{assignment.description}</td>
+            </tr>
+            <tr>
+              <td><label htmlFor="setfile"><strong>Choose File:</strong></label></td>
+              <td><input type="file" id="setfile" name="setfile" accept=".pdf,.doc,.docx,.txt,.jpg,.png,.jpeg" onChange={handleFileChange} required /></td>
+            </tr>
+            <tr>
+              <td colSpan="2" style={{ textAlign: 'center' }}>
+                <button type="submit">Submit</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+      {message && <p>{message}</p>}
     </div>
+  ) : (
+    <p>Loading assignment details...</p>
+  )}
+</div>
+
   );
 }
 

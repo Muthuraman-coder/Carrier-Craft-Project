@@ -487,7 +487,7 @@ app.delete('/api/assignments/:id' ,authenticateToken, async(req,res) =>{
 })
 
 // Get a specific assignment by ID
-app.get('/api/assignments/:id', async (req, res) => {
+app.get('/api/assignments/:id', authenticateToken,async (req, res) => {
     try {
         const assignment = await Assignment.findById(req.params.id)
             .populate('course', 'name')
@@ -625,6 +625,117 @@ app.get('/api/teachers-count' , async(req,res)=>{
     }))
     res.json(teachercounts)
 })
+
+ //chart for overall attendance %
+ app.get('/api/teacher-attendance/graph', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.user;
+        const teacher = await Teacher.findById(id).populate('course');
+
+        const teacherCourses = teacher.course.map(course => course._id);
+    
+        const students = await Student.find({ course: { $in: teacherCourses } })
+            .select('name attendance')
+            .populate('course', 'name');
+
+        const studentAttendanceData = students.map(student => {
+            const presentCount = student.attendance.filter(attendance => attendance.status.toLowerCase() === 'present').length;
+            return {
+                name: student.name,
+                presentCount
+            };
+        });
+
+        return res.json(studentAttendanceData);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+}); 
+
+//graph for top rank holders
+app.get('/api/top-students',authenticateToken, async (req, res) => {
+    try {
+        const results = await Assignment.aggregate([
+            { $unwind: "$submissions" },
+            {
+                $lookup: {
+                    from: "students", // Assuming students collection
+                    localField: "submissions.studentId",
+                    foreignField: "_id",
+                    as: "student"
+                }
+            },
+            { $unwind: "$student" },
+            {
+                $group: {
+                    _id: "$student._id",
+                    name: { $first: "$student.name" },
+                    totalGrade: { $sum: "$submissions.grade" }
+                }
+            },
+            { $sort: { totalGrade: -1 } }, // Sort by grades in descending order
+            { $limit: 10 } // Get top 10 students
+        ]);
+        console.log(results)
+        res.json(results);
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error", message: error.message });
+    }
+});
+
+//student graphs
+app.get('/api/student/:id/attendance/graph', async (req, res) => {
+    try {
+      const studentId = req.params.id;
+      const student = await Student.findById(studentId);
+  
+      if (!student) {
+        return res.status(404).json({ message: 'Student not found' });
+      }
+  
+      const attendanceStats = {
+        present: 0,
+        absent: 0,
+        late: 0,
+      };
+  
+      student.attendance.forEach((record) => {
+        if (record.status === 'Present') {
+          attendanceStats.present++;
+        } else if (record.status === 'Absent') {
+          attendanceStats.absent++;
+        } else if (record.status === 'Late') {
+          attendanceStats.late++;
+        }
+      });
+      res.json(attendanceStats);
+    } catch (error) {
+      console.error('Error fetching attendance data:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+app.get('/api/student/:studentId/assignments', async (req, res) => {
+    try {
+        const studentId = req.params.studentId;
+        const assignments = await Assignment.find({ 'submissions.studentId': studentId })
+            .populate('course')
+            .populate('submissions.studentId');
+        
+        const studentAssignments = assignments.map(assignment => {
+            const submission = assignment.submissions.find(sub => sub.studentId._id.toString() === studentId);
+            return {
+                title: assignment.title,
+                grade: submission ? submission.grade : null,
+            };
+        });
+        console.log(studentAssignments)
+        res.json(studentAssignments);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching assignments' });
+    }
+});
 
 // Courses
 app.get('/api/courses', async (req, res) => {

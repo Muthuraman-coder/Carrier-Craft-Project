@@ -37,7 +37,7 @@ const Tgraph = () => {
     }
 
     return ( 
-        <div style={{width: '80%' , margin:'0 auto'}}>
+        <div >
             <Bar data={bardata} />
         </div>
      );

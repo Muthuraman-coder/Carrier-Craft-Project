@@ -5,17 +5,21 @@ import { Link } from 'react-router-dom';
 function Assignments() {
     const [assignments, setAssignments] = useState([]);
     const [userRole, setUserRole] = useState(null);
+    const [studentId, setStudentId] = useState(null); 
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
-        const role = localStorage.getItem('role')
-        setUserRole(role)
-
-        const fetchAssignments = async ( ) => {
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+        const id = localStorage.getItem('studentId');  
+        setUserRole(role);
+        setStudentId(id);
+        const fetchAssignments = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/assignments',{headers:{Authorization:`Bearer ${token}`}});
+                const response = await axios.get('http://localhost:3001/api/assignments', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
                 setAssignments(response.data);
-                console.log(response.data)
+                console.log(response.data);
             } catch (error) {
                 console.error('Error fetching assignments', error);
             }
@@ -23,9 +27,12 @@ function Assignments() {
         fetchAssignments();
     }, []);
 
-    const handledelete = (id) =>{
-        const token = localStorage.getItem('token')
-        axios.delete(`http://localhost:3001/api/assignments/${id}`,{headers:{Authorization:`Bearer ${token}`}})
+    const handleDelete = (id) => {
+        const token = localStorage.getItem('token');
+        axios
+            .delete(`http://localhost:3001/api/assignments/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
             .then(() => {
                 setAssignments(assignments.filter((a) => a._id !== id));
                 alert('Deleted successfully');
@@ -33,29 +40,20 @@ function Assignments() {
             .catch((error) => {
                 console.error('Error deleting assignment:', error);
             });
-    }
+    };
 
     return (
         <div>
             <h2>Assignments</h2>
-            <table >
+            <table>
                 <thead>
                     <tr>
                         <th>Title</th>
                         <th>Due Date</th>
                         <th>Course</th>
-                        {userRole === 'teacher'?
-                        <th>Sumbitted Students</th>:
-                        <th>Assigned By</th>
-                        }
-                        {userRole === 'teacher'?
-                        <th>Remove</th>:
-                        <th>Submit Assignment</th>
-                        }
-                        {userRole==='student' && (
-                            <th>Grade</th>
-                        )}
-                        
+                        {userRole === 'teacher' ? <th>Submitted Students</th> : <th>Assigned By</th>}
+                        {userRole === 'teacher' ? <th>Remove</th> : <th>Submit Assignment</th>}
+                        {userRole === 'student' && <th>Mark</th>}
                     </tr>
                 </thead>
                 <tbody>
@@ -64,19 +62,32 @@ function Assignments() {
                             <td>{assignment.title}</td>
                             <td>{new Date(assignment.dueDate).toLocaleDateString()}</td>
                             <td>{assignment.course?.name}</td>
-                            {userRole === 'teacher' ? (<td style={{color:'blue'}}>
-                                <Link to={`/assignment/${assignment._id}`}>View Details</Link>
-                            </td>) : <td>{assignment.assignedBy?.name}</td>}
+                            {userRole === 'teacher' ? (
+                                <td style={{ color: 'blue' }}>
+                                    <Link to={`/assignment/${assignment._id}`}>View Details</Link>
+                                </td>
+                            ) : (
+                                <td>{assignment.assignedBy?.name}</td>
+                            )}
                             {userRole === 'teacher' && (
-                                <td><button onClick={() =>handledelete(assignment._id)}>Delete</button></td>
+                                <td>
+                                    <button onClick={() => handleDelete(assignment._id)}>Delete</button>
+                                </td>
                             )}
                             {userRole === 'student' && (
-                                <td>{assignment.submissions.map((s , index)=>(<div key={s._id}>{s.setfile ? ('Already summited') : <Link to={`/assignment/${assignment._id}/summit`}><button>summit</button></Link>} </div>))}</td>
+                                <td>{assignment.submissions.filter((submission) => submission.studentId === studentId).map((s , index)=>(<div key={s._id}>{s.setfile ? ('Already summited') : <Link to={`/assignment/${assignment._id}/summit`}><button>summit</button></Link>} </div>))}</td>
                             )}
                             {userRole === 'student' && (
                                 <td>
-                                {assignment.submissions.length > 0 ? assignment.submissions.map((s, index) => (
-                                    <div key={index}>{s.grade || ' grade pending!'}</div>)): 'No Submissions Yet'}
+                                    {assignment.submissions.length > 0 ? (
+                                        assignment.submissions
+                                            .filter((submission) => submission.studentId === studentId)
+                                            .map((s, index) => (
+                                                <div key={index}>{s.grade ? s.grade : 'grade pending!'}</div>
+                                            ))
+                                    ) : (
+                                        'No Submissions Yet'
+                                    )}
                                 </td>
                             )}
                         </tr>
@@ -86,5 +97,6 @@ function Assignments() {
         </div>
     );
 }
+
 
 export default Assignments;

@@ -9,9 +9,10 @@ const AssignmentDetails = () => {
     const [grade , setgrade] = useState('')
 
     useEffect(() => {
+        const token = localStorage.getItem('token')
         const fetchAssignment = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/assignments/${id}`);
+                const response = await axios.get(`http://localhost:3001/api/assignments/${id}`,{headers:{Authorization:`Bearer ${token}`}});
                 setAssignment(response.data);
             } catch (err) {
                 setError(err.response ? err.response.data.message : err.message);

@@ -26,7 +26,7 @@ const Graph = () => {
   if (!chartData) return <p>Loading or no data available...</p>;
 
   return (
-    <div style={{ width: '80%', margin: '0 auto' }}>
+    <div >
       <Bar  data={chartData}/>
     </div>
   );

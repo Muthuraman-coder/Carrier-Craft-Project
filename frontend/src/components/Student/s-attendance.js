@@ -25,16 +25,30 @@ function SAttendance() {
   }
 
   return (
-    <div className='resume-format'>
+    <div>
       <h4>Attendance:</h4>
-      <ul>
-        {student.attendance.map((record, index) => (
-          <li key={index}>
-            {new Date(record.date).toLocaleDateString()}: {record.status}
-          </li>
-        ))}
-      </ul>
+      {student.attendance.length > 0 ? (
+        <table border="1" style={{ borderCollapse: 'collapse', width: '100%' }}>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {student.attendance.map((record, index) => (
+              <tr key={index}>
+                <td>{new Date(record.date).toLocaleDateString()}</td>
+                <td>{record.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>No attendance records available.</p>
+      )}
     </div>
+
   );
 }
 

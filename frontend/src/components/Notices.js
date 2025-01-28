@@ -3,8 +3,11 @@ import React, { useEffect, useState } from 'react';
 
 function Notices() {
     const [notices, setNotices] = useState([]);
+    const [userrole , setUserRole] = useState();
 
   useEffect(() => {
+    const role = localStorage.getItem('role')
+    setUserRole(role)
     async function fetchNotices() {
       try {
         const response = await axios.get('http://localhost:3001/api/notices');
@@ -28,16 +31,39 @@ function Notices() {
   }
 
   return (
-    <div className="notice">
-      {notices.map(notice => (
-        <div className="section" key={notice._id}>
-          <h3>{notice.title}</h3>
-          <p>{notice.description}</p>
-          <p>{new Date(notice.date).toLocaleDateString()}</p>
-          <button onClick={() => handledelete(notice._id)}>Delete</button>
-        </div>
-      ))}
-     </div>
+    <div>
+      {notices.length > 0 ? (
+        <table border="1" style={{ borderCollapse: 'collapse', width: '100%' }}>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Date</th>
+              {userrole === 'admin' && (
+                <th>Actions</th>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {notices.map((notice) => (
+              <tr key={notice._id}>
+                <td>{notice.title}</td>
+                <td>{notice.description}</td>
+                <td>{new Date(notice.date).toLocaleDateString()}</td>
+                {userrole === 'admin' && (
+                <td>
+                  <button onClick={() => handledelete(notice._id)}>Delete</button>
+                </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>No notices available.</p>
+      )}
+    </div>
+
   );
 }
 
