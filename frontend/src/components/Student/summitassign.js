@@ -19,7 +19,7 @@ function AssignmentSubmit() {
           },
         });
         localStorage.setItem('studentId', response.data._id); 
-        setStudentId(response.data._id); 
+        setStudentId(response.data._id);  
       } catch (error) {
         console.error('Error fetching user data:', error);
       }

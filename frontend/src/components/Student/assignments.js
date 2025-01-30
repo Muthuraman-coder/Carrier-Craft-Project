@@ -75,7 +75,17 @@ function Assignments() {
                                 </td>
                             )}
                             {userRole === 'student' && (
-                                <td>{assignment.submissions.filter((submission) => submission.studentId === studentId).map((s , index)=>(<div key={s._id}>{s.setfile ? ('Already summited') : <Link to={`/assignment/${assignment._id}/summit`}><button>summit</button></Link>} </div>))}</td>
+                                <td>
+                                {assignment.submissions.some((submission) => submission.studentId === studentId) ? (
+                                    assignment.submissions
+                                        .filter((submission) => submission.studentId === studentId)
+                                        .map((s, index) => (
+                                            <div key={index}>{s.setfile ? 'Already submitted' : <Link to={`/assignment/${assignment._id}/summit`}><button>Submit</button></Link>}</div>
+                                        ))
+                                ) : (
+                                    <Link to={`/assignment/${assignment._id}/summit`}><button>Submit</button></Link>
+                                )}
+                            </td>
                             )}
                             {userRole === 'student' && (
                                 <td>

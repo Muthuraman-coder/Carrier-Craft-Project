@@ -18,6 +18,7 @@ const TAttendanceGraph = () => {
                 setAttendanceData(response.data)
             } catch (err) {
                 setError(err.message);
+                
             }
         };
 
